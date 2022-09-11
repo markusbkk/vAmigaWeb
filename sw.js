@@ -119,7 +119,19 @@ self.addEventListener('fetch', function(event){
         if(cachedResponsePromise)
         {
           console.log('sw: get from '+active_cache_name+' cached resource: '+event.request.url);
-          return cachedResponsePromise;
+          
+          const newHeaders = new Headers(cachedResponsePromise.headers);
+          newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+          newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+  
+          const moddedResponse = new Response(cachedResponsePromise.body, {
+            status: cachedResponsePromise.status,
+            statusText: cachedResponsePromise.statusText,
+            headers: newHeaders,
+          });
+  
+          return moddedResponse;
+//          return cachedResponsePromise;
         }
 
         //if not in cache try to fetch
@@ -145,7 +157,19 @@ self.addEventListener('fetch', function(event){
             catch(e) { console.error(`exception during fetch ${e}`); }
           }()
         );   
-        return networkResponsePromise;
+
+
+        const newHeaders = new Headers(networkResponsePromise.headers);
+        newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+        newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+
+        const moddedResponse = new Response(networkResponsePromise.body, {
+          status: networkResponsePromise.status,
+          statusText: networkResponsePromise.statusText,
+          headers: newHeaders,
+        });
+        return moddedResponse;
+//        return networkResponsePromise;
       }
    }());
 });

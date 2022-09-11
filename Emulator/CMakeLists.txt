@@ -38,6 +38,7 @@ else()
   target_compile_options(vAmigaCore PRIVATE -Wno-unused-parameter -Wno-unused-but-set-variable)
   target_compile_options(vAmigaCore PRIVATE -O3)
   target_compile_options(vAmigaCore PRIVATE -Wfatal-errors -fexceptions)
+  target_compile_options(vAmigaCore PRIVATE -sWASM_WORKERS)
 #  target_compile_options(vAmigaCore PRIVATE -g) 
 endif()
 
