@@ -53,7 +53,7 @@ bool ntsc=false;
 u8 target_fps = 50;
 
 extern "C" void wasm_set_display(const char *name);
-
+extern "C" void wasm_execute_in_worker();
 
 int clip_width  = 724 * TPP;
 int clip_height = 568;
@@ -268,10 +268,7 @@ Amiga *thisAmiga=NULL;
 u8 executed_since_last_host_frame=0;
 extern "C" void wasm_execute()
 {
-  thisAmiga->execute();
-  executed_since_last_host_frame++;
-  executed_frame_count++;
-  total_executed_frame_count++;
+  wasm_execute_in_worker();
 }
 
 extern "C" int wasm_draw_one_frame(double now)
@@ -352,13 +349,19 @@ extern "C" int wasm_draw_one_frame(double now)
   {
     //execute always an odd number of amiga frames
     //this is needed for correct detection of longframes and shortframes when 
-    //amiga uses interlaced resolution and the host device is to slow to render 
+    //amiga uses interlaced resolution and the host device is too slow to render 
     //always one amiga frame per host frame i.e. when fps drops below 50 
-    amiga->execute();
+    
+    //while(behind>0)
+    //{
+    //  wasm_execute_in_worker();
+    //  behind--;
+    //}
+//    amiga->execute();
  
-    executed_frame_count++;
-    total_executed_frame_count++;
-    behind--;
+    //executed_frame_count++;
+    //total_executed_frame_count++;
+    //behind--;
   }
 
   executed_since_last_host_frame=0;
@@ -585,6 +588,11 @@ class vAmigaWrapper {
     amiga->msgQueue.setListener(this->amiga, &theListener);
     amiga->defaults.setFallback(OPT_HDC_CONNECT, 0, false);
 
+
+    amiga->configure(OPT_RTC_MODEL, RTC_NONE); 
+
+
+
     // master Volumne
     amiga->configure(OPT_AUDVOLL, 100); 
     amiga->configure(OPT_AUDVOLR, 100);
@@ -634,18 +642,33 @@ void test_success()
 
 }
 
-void run_in_worker()
-{
- console_log("test111_success");
-  //EM_ASM({console.log("Hello log")});
-  printf("Hello from wasm worker!\n");
-  emscripten_wasm_worker_post_function_sig(EMSCRIPTEN_WASM_WORKER_ID_PARENT,(void *) test_success, "id");
-}
 
 vAmigaWrapper *wrapper = NULL;
-extern "C" int main(int argc, char** argv) {
-  emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */1024);
+emscripten_wasm_worker_t worker;
+void run_in_worker()
+{
+  console_log("run_in_worker");
+  //EM_ASM({console.log("Hello log")});
+//  printf("Hello from wasm worker!\n");
+//  emscripten_wasm_worker_post_function_sig(EMSCRIPTEN_WASM_WORKER_ID_PARENT,(void *) test_success, "id");
+//  wasm_execute();
+  thisAmiga->execute();
+  executed_since_last_host_frame++;
+  executed_frame_count++;
+  total_executed_frame_count++;
+
+
+}
+
+void wasm_execute_in_worker()
+{
   emscripten_wasm_worker_post_function_v(worker, run_in_worker); 
+}
+
+
+extern "C" int main(int argc, char** argv) {
+  worker = emscripten_malloc_wasm_worker(/*stack size: */1024);
+//  emscripten_wasm_worker_post_function_v(worker, run_in_worker); 
   printf("worker started");
   wrapper= new vAmigaWrapper();
  // initSDL(wrapper->amiga);

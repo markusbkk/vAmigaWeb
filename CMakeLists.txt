@@ -36,8 +36,10 @@ set(CMAKE_EXECUTABLE_SUFFIX ".html")
 add_custom_target(run
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.html ../index.html
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.js ..
+    COMMAND ${CMAKE_COMMAND} -E copy vAmiga.ww.js ..
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.wasm ..
-    COMMAND ${CMAKE_COMMAND} -E chdir .. python3 -m http.server 8080
+#    COMMAND ${CMAKE_COMMAND} -E chdir .. python3 -m http.server 8080
+	COMMAND ${CMAKE_COMMAND} -E chdir .. python3 ./https.py
 	DEPENDS vAmiga
 )
 

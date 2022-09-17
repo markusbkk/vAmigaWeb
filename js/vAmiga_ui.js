@@ -1370,12 +1370,15 @@ function InitWrappers() {
                 {
                     queued_executes++;
                     setTimeout(execute_amiga_frame);
+                    //execute_amiga_frame();
                 }
+
                 // request another animation frame
                 if(!stop_request_animation_frame)
                 {
                     requestAnimationFrame(do_animation_frame);   
                 }
+
             }
         }  
         if(stop_request_animation_frame)
