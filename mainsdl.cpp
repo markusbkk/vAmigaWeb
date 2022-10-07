@@ -453,7 +453,6 @@ extern "C" int wasm_draw_one_frame(double now)
 }
 
 
-
 int sample_size=0;
 void MyAudioCallback(void*  thisAmiga,
                        Uint8* stream,
@@ -676,7 +675,11 @@ extern "C" int main(int argc, char** argv) {
   return 0;
 }
 
-
+extern "C" Texel * wasm_pixel_buffer()
+{
+  auto stable_ptr = thisAmiga->denise.pixelEngine.stablePtr();
+  return stable_ptr;
+}
 
 extern "C" int wasm_get_renderer()
 { 
