@@ -59,6 +59,7 @@ add_custom_target(publish
 	COMMAND ${CMAKE_COMMAND} -E rm -f  ${PUBLISH_FOLDER}/run.html
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.html ${PUBLISH_FOLDER}/index.html
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.js ${PUBLISH_FOLDER}
+    COMMAND ${CMAKE_COMMAND} -E copy vAmiga.ww.js ${PUBLISH_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.wasm ${PUBLISH_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../js ${PUBLISH_FOLDER}/js
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../css ${PUBLISH_FOLDER}/css
@@ -85,6 +86,7 @@ add_custom_target(uat
 	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/run.html
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.html ${UAT_FOLDER}/index.html
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.js ${UAT_FOLDER}
+    COMMAND ${CMAKE_COMMAND} -E copy vAmiga.ww.js ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.wasm ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../js ${UAT_FOLDER}/js
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../css ${UAT_FOLDER}/css
