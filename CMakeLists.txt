@@ -72,7 +72,7 @@ add_custom_target(publish
 	DEPENDS vAmiga
 )
 
-set(UAT_FOLDER "../../uat")
+set(UAT_FOLDER "../../ghworker")
 add_custom_target(uat
 	COMMAND ${CMAKE_COMMAND} -E rm -rf ${UAT_FOLDER}/sounds
 	COMMAND ${CMAKE_COMMAND} -E rm -rf ${UAT_FOLDER}/roms
@@ -83,9 +83,12 @@ add_custom_target(uat
 	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/*.js
 #	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/*.json
 	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/index.html
+	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/vAmiga.html
 	COMMAND ${CMAKE_COMMAND} -E rm -f  ${UAT_FOLDER}/run.html
+#	COMMAND ${CMAKE_COMMAND} -E copy ../install_sw.html ${UAT_FOLDER}/index.html
+#	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.html ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.html ${UAT_FOLDER}/index.html
-    COMMAND ${CMAKE_COMMAND} -E copy vAmiga.js ${UAT_FOLDER}
+	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.js ${UAT_FOLDER}
     COMMAND ${CMAKE_COMMAND} -E copy vAmiga.ww.js ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy vAmiga.wasm ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../js ${UAT_FOLDER}/js
@@ -95,6 +98,6 @@ add_custom_target(uat
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ../sounds ${UAT_FOLDER}/sounds
 	COMMAND ${CMAKE_COMMAND} -E copy ../run.html ${UAT_FOLDER}
 	COMMAND ${CMAKE_COMMAND} -E copy ../sw.js ${UAT_FOLDER}
-#	COMMAND ${CMAKE_COMMAND} -E copy ../manifest.json ${UAT_FOLDER}
+	COMMAND ${CMAKE_COMMAND} -E copy ../manifest.json ${UAT_FOLDER}
 	DEPENDS vAmiga
 )

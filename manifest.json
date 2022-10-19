@@ -1,11 +1,12 @@
 {
-  "name": "vAmigaWeb",
-  "short_name": "vAmigaWeb",
-  "start_url": "/",
+  "name": "vAmigaWorker",
+  "short_name": "vAmigaWorker",
+  "start_url": "/worker/",
+  "id": "/worker/",
   "scope": ".",
-  "display": "fullscreen",
-  "background_color": "#BBBBBB",
-  "theme_color": "#BBBBBB",
+  "display": "standalone",
+  "background_color": "black",
+  "theme_color": "black",
   "icons": [
     {
       "src": "img/icon-72x72.png",

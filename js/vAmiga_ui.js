@@ -19,6 +19,16 @@ let virtual_keyboard_clipping = true; //keyboard scrolls when it clips
 let use_wide_screen=false;
 let use_ntsc_pixel=false;
 
+let HBLANK_MIN=0x12*4*4;
+let HPIXELS=912;
+let PAL_EXTRA_VPIXELS=140;
+let VPIXELS=313;
+let xOff = 0;//252;
+let yOff=26 + 6;
+let clipped_width=HPIXELS-xOff;
+let clipped_height=VPIXELS+PAL_EXTRA_VPIXELS ;
+
+
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioContext = new AudioContext();
 let audio_connected=false;
@@ -1357,14 +1367,6 @@ function InitWrappers() {
     queued_executes=0;
     ctx=null;
 
-    let HBLANK_MIN=0x12*4*4;
-    let HPIXELS=912;
-    let PAL_EXTRA_VPIXELS=140;
-    let VPIXELS=313;
-    let xOff = 0;//252;
-    let yOff=26 + 6;
-    let clipped_width=HPIXELS-xOff;
-    let clipped_height=312*2-yOff -2*4  ;
 
     wasm_run = function () {
         Module._wasm_run();       
@@ -2265,7 +2267,7 @@ $('.layer').change( function(event) {
 });
 
 //------
-    load_console=function () { var script = document.createElement('script'); script.src="//cdn.jsdelivr.net/npm/eruda@2.4.1"; document.body.appendChild(script); script.onload = function () { eruda.init(
+    load_console=function () { var script = document.createElement('script'); script.src="js/eruda.js"; document.body.appendChild(script); script.onload = function () { eruda.init(
     {
         defaults: {
             displaySize: 50,
@@ -3823,8 +3825,9 @@ function setTheme() {
 
 function scaleVMCanvas() {
         let the_canvas = document.getElementById("canvas");
-        var src_width=Module._wasm_get_render_width();
-        var src_height=Module._wasm_get_render_height()*2; 
+        var src_width=clipped_width;//Module._wasm_get_render_width();
+        var src_height=clipped_height*2;//Module._wasm_get_render_height()*2; 
+                
         if(use_ntsc_pixel)
         {
             src_height*=52/44;

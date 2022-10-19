@@ -1,6 +1,6 @@
 const url_root_path= self.location.pathname.replace("/sw.js","");
 const core_version  = '3.0b1'; //has to be the same as the version in Emulator/config.h
-const ui_version = '2022_09_17_worker'+url_root_path.replace("/","_");
+const ui_version = '2022_10_19'+url_root_path.replace("/","_");
 const cache_name = `${core_version}@${ui_version}`;
 const settings_cache = 'settings';
 
@@ -93,11 +93,6 @@ self.addEventListener('fetch', function(event){
   event.respondWith(async function () {
       //is this url one that should not be cached at all ? 
       if(
-        event.request.url.startsWith('https://csdb.dk/webservice/') && 
-        !event.request.url.endsWith('cache_me=true')
-        ||
-        event.request.url.startsWith('https://mega65.github.io/')
-        ||
         event.request.url.toLowerCase().startsWith('https://vamigaweb.github.io/doc')
         ||
         event.request.url.toLowerCase().endsWith('vamigaweb_player.js')
@@ -138,12 +133,19 @@ self.addEventListener('fetch', function(event){
       	//with no-cache because we dont want to cache a 304 response ...
 	      //learn more here
 	      //https://stackoverflow.com/questions/29246444/fetch-how-do-you-make-a-non-cached-request 
-        var networkResponsePromise = fetch(event.request, {cache: "no-cache"});
+        
+        //to cache vAmiga.html instead of the sw installer index.html 
+        let sw_request=event.request;
+/*        if(event.request.url.endsWith(url_root_path+'/'))
+        {
+          sw_request = `${event.request.url}vAmiga.html`;
+        }
+*/
+        var networkResponse = await fetch(sw_request, {cache: "no-cache"});
         event.waitUntil(
           async function () 
           {
             try {
-              var networkResponse = await networkResponsePromise;
               if(networkResponse.status == 200)
               {
                 console.log(`sw: status=200 into ${active_cache_name} putting fetched resource: ${event.request.url}`);
@@ -159,17 +161,16 @@ self.addEventListener('fetch', function(event){
         );   
 
 
-        const newHeaders = new Headers(networkResponsePromise.headers);
+        const newHeaders = new Headers(networkResponse.headers);
         newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
         newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
 
-        const moddedResponse = new Response(networkResponsePromise.body, {
-          status: networkResponsePromise.status,
-          statusText: networkResponsePromise.statusText,
+        const moddedResponse = new Response(networkResponse.body, {
+          status: networkResponse.status,
+          statusText: networkResponse.statusText,
           headers: newHeaders,
         });
         return moddedResponse;
-//        return networkResponsePromise;
       }
    }());
 });

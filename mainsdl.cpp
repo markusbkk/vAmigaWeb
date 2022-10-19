@@ -646,7 +646,7 @@ vAmigaWrapper *wrapper = NULL;
 emscripten_wasm_worker_t worker;
 void run_in_worker()
 {
-  console_log("run_in_worker");
+//  console_log("run_in_worker");
   //EM_ASM({console.log("Hello log")});
 //  printf("Hello from wasm worker!\n");
 //  emscripten_wasm_worker_post_function_sig(EMSCRIPTEN_WASM_WORKER_ID_PARENT,(void *) test_success, "id");
@@ -655,8 +655,6 @@ void run_in_worker()
   executed_since_last_host_frame++;
   executed_frame_count++;
   total_executed_frame_count++;
-
-
 }
 
 void wasm_execute_in_worker()
