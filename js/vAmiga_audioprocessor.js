@@ -77,6 +77,8 @@ class vAmigaAudioProcessor extends AudioWorkletProcessor {
       console.error("error:"+ error);
     };
 
+    this.soundbuffer_slots=[16];
+
     this.fetch_buffer_stack=new RingBuffer(16);
     this.buffer=null;
     this.buf_addr=0;
@@ -96,7 +98,15 @@ class vAmigaAudioProcessor extends AudioWorkletProcessor {
 
   handleMessage(event) {
     //console.log("processor received sound data");
-    this.fetch_buffer_stack.write(event.data);
+    if(event.data.cmd=='create_slot')
+    {
+      this.soundbuffer_slots[event.data.id]=event.data.slot;
+    }
+    else if(event.data.cmd=='write')
+    {
+      this.fetch_buffer_stack.write(this.soundbuffer_slots[event.data.id]);
+    }
+  
   }
 
   fetch_data()
@@ -105,11 +115,11 @@ class vAmigaAudioProcessor extends AudioWorkletProcessor {
     if(!this.recyle_buffer_stack.isEmpty())
     {
       let shuttle=this.recyle_buffer_stack.read();
-      this.port.postMessage(shuttle, [shuttle.buffer]);
+      this.port.postMessage(true/*shuttle*/);
     }
     else
     {
-      this.port.postMessage("empty");
+      this.port.postMessage(true /*"empty"*/);
     }
   }
 

@@ -1499,6 +1499,8 @@ function InitWrappers() {
             {
                 soundbuffer_slots.push(
                     new Float32Array(Module.HEAPF32.buffer, sound_buffer_address+(slot*2048)*4, 2048));
+                
+                worklet_node.port.postMessage({cmd:'create_slot',id:slot,slot:soundbuffer_slots[slot]});
             }
         }
         init_sound_buffer();
@@ -1512,7 +1514,7 @@ function InitWrappers() {
         worklet_node.port.onmessage = (msg) => {
             //direct c function calls with preceeding Module._ are faster than cwrap
             let samples=Module._wasm_copy_into_sound_buffer();
-            let shuttle = msg.data;
+/*          let shuttle = msg.data;
             if(samples<1024)
             {
                 if(shuttle!="empty")
@@ -1521,10 +1523,11 @@ function InitWrappers() {
                 }
                 return;
             }
+*/
             let slot=0;
             while(samples>=1024)
             {
-                if(shuttle == null || shuttle=="empty")
+/*                if(shuttle == null || shuttle=="empty")
                 {
                     if(!empty_shuttles.isEmpty())
                     {
@@ -1535,15 +1538,17 @@ function InitWrappers() {
                       return;
                     }
                 }
+*/
                 let wasm_buffer_slot = soundbuffer_slots[slot++];
                 if(wasm_buffer_slot.byteLength==0)
                 {//slot can be detached when wasm had grown memory, adresses are wrong then so lets reinit
                     init_sound_buffer();
-                    wasm_buffer_slot = soundbuffer_slots[slot-1];
+//                    wasm_buffer_slot = soundbuffer_slots[slot-1];
                 }
-                shuttle.set(wasm_buffer_slot);
-                worklet_node.port.postMessage(shuttle, [shuttle.buffer]);
-                shuttle=null;
+                //shuttle.set(wasm_buffer_slot);
+                //worklet_node.port.postMessage(shuttle, [shuttle.buffer]);
+                worklet_node.port.postMessage({cmd:'write',id:(slot-1)});
+//                shuttle=null;
                 samples-=1024;
             }            
         };
